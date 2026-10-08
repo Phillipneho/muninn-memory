@@ -101,8 +101,6 @@ Storage: SQLite + FTS5 + sqlite-vec, WAL mode. Embeddings via local Ollama (`nom
 - 1.0: **frozen** — benchmarks audited, scorers locked
 - 2.0: **live in production** — dual-eval checkpoint banked; roadmap: temporal-qualifier read path ("what was my role *before* X"), prompt-capture for the query inspector, slice-C slot expansion
 
-Muninn is being evaluated as a capability play within [Vertage](https://github.com/Phillipneho/huginn) (12 rebranded staffing businesses) — train PMs to see AI opportunity, produce the sellable artifacts.
-
 ## License
 
 Private project made public for benchmark transparency. All rights reserved by the author; code provided as-is for evaluation and reuse under the repository license.

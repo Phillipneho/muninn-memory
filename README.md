@@ -4,7 +4,15 @@ _Bi-temporal persistent memory for AI agents. Memory to [Huginn](https://github.
 
 Muninn ingests raw agent sessions, distills them into facts bound to entities, and curates itself — nightly decay, consolidation, and supersession, like a memory that sleeps. Where typical memory systems append and bloat, Muninn's store stays small, current, and auditable.
 
-**This repository is a curated public snapshot of the Muninn engine.** The production deployment (private repo, personal data) runs on a homelab powering the Huginn agent daily. The project has two completed eras:
+**This repository is a curated public snapshot of the Muninn engine.** The full engineering history — 1,900+ commits across two years of daily development — lives in a private development repository, where Muninn runs in production on a homelab powering the Huginn agent's memory every day. This snapshot was published for benchmark transparency and reuse: the code is complete and current, but the commit history here intentionally starts fresh.
+
+A sense of the journey behind this snapshot:
+
+- **The cloud era (2024–2025):** Muninn began as a TypeScript, cloud-hosted memory product aiming at Supermemory parity (`Phillipneho/muninn` + `muninn-skill`, since archived). It didn't get commercial traction and was rolled back to local-only — an instructive failure that shaped everything after.
+- **The local rebuild (2025):** the homelab Python rewrite became the daily driver: ingestion→extraction→sleep-cycle pipeline over SQLite + FTS5 + sqlite-vec, bi-temporal facts, hybrid retrieval. Ran in production for months before any benchmark existed.
+- **The audit era (2026):** full LoCoMo evaluation (n=1986) scored under two tracks — standard J-score and a strict conveyance audit — with an explicit audit that caught scorer artifacts (cat5 0.9%→36.8%) and a 280-row wiring gap; scorers then frozen as read-only fixtures.
+- **The compiled-state era (2026):** entities compiled into 18 deterministic state slots with a feature-flagged point-lookup read path, validated across 663 dual-eval questions with per-query flag isolation and route logging.
+- **Engineering hygiene throughout:** every destructive operation backed up, an FK-orphan repair executed with a full postmortem (`docs/`), a 19/19 regression matrix, and an external gate so the agent can't modify its own memory unsupervised.
 
 ---
 

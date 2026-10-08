@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center gap-3 mb-4">
+  {% if entity_name %}
+    <span class="text-sm text-gray-500">Entity:</span>
+    <span class="badge badge-indigo">{{ entity_name }}</span>
+    <a href="/timeline" class="text-xs text-indigo-500 hover:text-indigo-700">clear filter</a>
+  {% else %}
+    <span class="text-sm text-gray-500">All events · newest first</span>
+  {% endif %}
+</div>
+
+<div class="relative">
+  <div class="absolute left-[7px] top-2 bottom-2 w-px bg-gray-200"></div>
+  <div class="space-y-3">
+    {% for e in ev %}
+    <div class="relative flex items-start gap-4">
+      <span class="mt-1.5 w-[9px] h-[9px] rounded-full shrink-0
+        {% if e.kind == 'fact' %}bg-indigo-500
+        {% elif e.kind == 'compile' %}bg-green-500
+        {% elif e.kind == 'session' %}bg-amber-400
+        {% else %}bg-gray-300{% endif %}
+        ring-2 ring-white"></span>
+      <div class="card p-3 flex-1 {% if e.superseded %}opacity-60{% endif %}">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="badge {% if e.kind == 'fact' %}badge-indigo
+              {% elif e.kind == 'compile' %}badge-green
+              {% elif e.kind == 'session' %}badge-amber
+              {% else %}badge-gray{% endif %}">{{ e.kind }}</span>
+            <span class="text-sm font-medium text-gray-800">{{ e.text }}</span>
+            {% if e.superseded %}<span class="badge badge-gray">superseded by #{{ e.superseded }}</span>{% endif %}
+          </div>
+          <span class="mono text-xs text-gray-400">{{ (e.at or '')[:19] }}</span>
+        </div>
+        {% if e.detail %}<div class="mt-1 text-sm text-gray-600">{{ (e.detail or '')[:140] }}</div>{% endif %}
+      </div>
+    </div>
+    {% else %}
+    <div class="text-sm text-gray-400">No events in range.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

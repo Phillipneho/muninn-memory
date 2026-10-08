@@ -1,0 +1,14 @@
+{% for r in rows %}
+<a href="/entities/{{ r.id }}" class="card p-4 block hover:border-indigo-300 hover:shadow-md transition">
+  <div class="flex items-start justify-between">
+    <div class="font-semibold text-gray-900">{{ r.name }}</div>
+    <span class="badge badge-gray">{{ r.type or '?' }}</span>
+  </div>
+  <div class="mt-2 flex items-center gap-3 text-xs text-gray-500">
+    <span><span class="mono font-medium text-gray-700">{{ r.fact_count }}</span> facts</span>
+    {% if r.slot_count %}<span class="badge badge-indigo">{{ r.slot_count }} slots</span>{% endif %}
+  </div>
+</a>
+{% else %}
+<div class="text-sm text-gray-400 col-span-3">No entities match.</div>
+{% endfor %}

@@ -1,0 +1,31 @@
+{% for f in facts %}
+<tr class="border-t border-gray-100 hover:bg-gray-50 {% if show == 'superseded' %}bg-gray-50/40{% endif %}">
+  <td class="px-4 py-1.5 font-medium text-gray-800">{{ f.predicate }}</td>
+  <td class="px-4 py-1.5">
+    {% if show == 'superseded' %}
+      <span class="superseded">{{ f.object_value or (f.object_entity_id and '→ entity #' ~ f.object_entity_id) or '—' }}</span>
+      {% if f.superseded_by %}<span class="text-xs text-indigo-500 ml-1">↑ #{{ f.superseded_by }}</span>{% endif %}
+      {% if f.valid_until %}<span class="mono text-[10px] text-gray-400 ml-1">until {{ f.valid_until[:10] }}</span>{% endif %}
+    {% else %}
+      {{ f.object_value or (f.object_entity_id and '→ entity #' ~ f.object_entity_id) or '—' }}
+    {% endif %}
+  </td>
+  <td class="px-4 py-1.5 mono text-xs text-gray-500">{{ f.pds_domain or '—' }}</td>
+  <td class="px-4 py-1.5 mono text-xs">{{ f.activation if f.activation is not none else '—' }}</td>
+  <td class="px-4 py-1.5 mono text-xs text-gray-400">{{ f.id }}</td>
+</tr>
+{% else %}
+<tr><td colspan="5" class="px-4 py-3 text-sm text-gray-400">No facts in this view.</td></tr>
+{% endfor %}
+{% if facts and offset + facts|length < total %}
+<tr id="loadmore-row">
+  <td colspan="5" class="px-4 py-2 text-center bg-gray-50/60">
+    <button class="text-xs text-indigo-500 hover:text-indigo-700 font-medium"
+            hx-get="/frag/entity-facts/{{ entity_id }}?show={{ show }}&offset={{ offset + facts|length }}"
+            hx-target="#loadmore-row" hx-swap="outerHTML">
+      Load more — {{ total - offset - facts|length }} remaining
+    </button>
+    <span class="text-[10px] text-gray-400 mono ml-2">showing {{ offset + facts|length }}/{{ total }}</span>
+  </td>
+</tr>
+{% endif %}

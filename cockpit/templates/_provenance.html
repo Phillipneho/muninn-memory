@@ -1,0 +1,17 @@
+<div class="space-y-2">
+  {% for f in facts %}
+  <div class="border-l-2 border-indigo-200 pl-2.5">
+    <div class="flex items-baseline gap-2 flex-wrap">
+      <span class="mono text-gray-400 text-xs">#{{ f.fact_id }}</span>
+      <span class="font-medium text-gray-700 text-sm">{{ f.pred or '' }} {{ f.value or '' }}</span>
+      <span class="mono text-[10px] text-gray-400">{{ (f.ts or '')[:19] }}</span>
+      {% if f.session_id %}<span class="mono text-[10px] text-indigo-400">{{ f.session_id }}</span>{% endif %}
+    </div>
+    {% if f.snippet %}
+    <div class="mt-0.5 text-xs text-gray-500 bg-gray-50 border border-gray-100 rounded px-2 py-1.5 mono leading-relaxed">…{{ f.snippet }}…</div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="text-xs text-gray-400">No evidence recorded for this slot.</div>
+  {% endfor %}
+</div>

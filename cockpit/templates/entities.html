@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center gap-3 mb-4">
+  <input id="ent-search" name="q" value="{{ q }}" placeholder="Search entities…"
+         class="w-80 px-3 py-2 text-sm border border-gray-300 rounded-md bg-white
+                focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
+         hx-get="/entities" hx-target="#ent-list" hx-trigger="input changed delay:250ms"
+         hx-include="this">
+  <span class="text-xs text-gray-400">{{ rows|length }} entities (top by fact count)</span>
+</div>
+
+<div id="ent-list" class="grid grid-cols-3 gap-3">
+  {% include "_entity_cards.html" %}
+</div>
+{% endblock %}

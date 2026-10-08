@@ -1,0 +1,11 @@
+*.db
+*.db-*
+*.sqlite
+*.bak*
+__pycache__/
+*.pyc
+.openclaw/
+*.log
+.env
+ingested*
+expansion_cache.json

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Vitals -->
+<div class="grid grid-cols-5 gap-4">
+  {% for label, key in [('Facts','facts'), ('Entities','entities'),
+                        ('Compiled rows','entity_state'),
+                        ('Raw sessions','raw_sessions'),
+                        ('Query logs','query_logs')] %}
+  <div class="card p-4">
+    <div class="section-h">{{ label }}</div>
+    <div class="mt-1 text-2xl font-semibold mono">{{ v.counts[key] }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="mt-4 grid grid-cols-2 gap-4">
+  <!-- Orphan debt -->
+  <div class="card p-5">
+    <div class="flex items-center justify-between">
+      <div class="section-h">Orphan reference debt</div>
+      <span class="badge badge-amber">repair baseline</span>
+    </div>
+    <table class="mt-3 w-full text-sm">
+      <thead><tr class="text-left text-xs text-gray-400 uppercase tracking-wide">
+        <th class="py-1">Side</th><th class="py-1">Dangling IDs</th><th class="py-1">Orphan rows</th>
+      </tr></thead>
+      <tbody class="mono">
+        <tr class="border-t border-gray-100">
+          <td class="py-1.5">subject_entity_id</td>
+          <td class="py-1.5 font-semibold">{{ v.orphan_subject.ids }}</td>
+          <td class="py-1.5">{{ v.orphan_subject.rows }}</td>
+        </tr>
+        <tr class="border-t border-gray-100">
+          <td class="py-1.5">object_entity_id</td>
+          <td class="py-1.5 font-semibold">{{ v.orphan_object.ids }}</td>
+          <td class="py-1.5">{{ v.orphan_object.rows }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="mt-2 text-xs text-gray-400">Logged in technical_debt/ingestion_foreign_key_orphans.md — this counter is the repair-pass benchmark.</p>
+  </div>
+
+  <!-- Config + digests -->
+  <div class="card p-5">
+    <div class="section-h">Retrieval config</div>
+    <div class="mt-3 space-y-1.5">
+      {% for c in v.config %}
+      <div class="flex items-center justify-between text-sm">
+        <span class="mono text-gray-600">{{ c.key }}</span>
+        {% if c.key == 'entity_state_read_enabled' %}
+          {% if c.value == '1' %}<span class="badge badge-green">ON</span>
+          {% else %}<span class="badge badge-red">OFF</span>{% endif %}
+        {% else %}
+          <span class="mono">{{ c.value }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="section-h mt-5">Content digests (drift watch)</div>
+    <div class="mt-2 space-y-1.5 text-sm">
+      {% for t, h in v.digests.items() %}
+      <div class="flex items-center justify-between">
+        <span class="text-gray-600">{{ t }}</span>
+        <span class="mono text-xs text-gray-500">{{ h }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Last compiles -->
+<div class="mt-4 card p-5">
+  <div class="section-h">Latest compile activity (by slot)</div>
+  <table class="mt-3 w-full text-sm">
+    <thead><tr class="text-left text-xs text-gray-400 uppercase tracking-wide">
+      <th class="py-1">Slot</th><th class="py-1">Slot rows</th><th class="py-1">Last compiled</th>
+    </tr></thead>
+    <tbody>
+      {% for c in v.last_compiles %}
+      <tr class="border-t border-gray-100">
+        <td class="py-1.5 font-medium">{{ c.attribute }}</td>
+        <td class="py-1.5 mono">{{ c.slots }}</td>
+        <td class="py-1.5 mono text-xs text-gray-500">{{ c.at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

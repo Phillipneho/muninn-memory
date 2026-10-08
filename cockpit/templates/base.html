@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Muninn Cockpit{% endblock %} · Muninn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/styled.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #FAFAFA; color: #111827; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .card { background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .section-h { font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+                 text-transform: uppercase; color: #6B7280; }
+    .badge { display: inline-flex; align-items: center; font-size: 11px;
+             font-weight: 500; padding: 2px 8px; border-radius: 9999px;
+             border: 1px solid; }
+    .badge-green { color:#065F46; border-color:#6EE7B7; background:#ECFDF5; }
+    .badge-amber { color:#92400E; border-color:#FCD34D; background:#FFFBEB; }
+    .badge-red   { color:#991B1B; border-color:#FCA5A5; background:#FEF2F2; }
+    .badge-gray  { color:#4B5563; border-color:#D1D5DB; background:#F9FAFB; }
+    .badge-indigo{ color:#3730A3; border-color:#A5B4FC; background:#EEF2FF; }
+    .superseded { color: #9CA3AF; text-decoration: line-through; }
+  </style>
+</head>
+<body class="min-h-screen">
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-56 shrink-0 border-r border-gray-200 bg-white">
+    <div class="px-5 py-5">
+      <div class="flex items-center gap-2">
+        <span class="text-lg font-bold tracking-tight">Muninn</span>
+        <span class="badge badge-indigo">Cockpit</span>
+      </div>
+      <div class="mt-1 text-xs text-gray-400 mono">v2.0 · read-only</div>
+    </div>
+    <nav class="mt-2 px-2 space-y-0.5">
+      {% set nav = [('/entities','Entity Explorer'), ('/timeline','Timeline Stream'),
+                    ('/queries','Query & Audit Log'), ('/health','Health & Integrity')] %}
+      {% for href, label in nav %}
+      <a href="{{ href }}"
+         class="block px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+        {{ label }}
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="absolute bottom-0 w-56 px-5 py-4 border-t border-gray-200 bg-white">
+      <div class="flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+        <span class="text-xs text-gray-500">muninn.db · <span class="mono">mode=ro</span></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 overflow-y-auto">
+    <div class="px-8 py-6 border-b border-gray-200 bg-white flex items-center justify-between sticky top-0 z-10">
+      <h1 class="text-xl font-semibold tracking-tight">{% block header %}{{ title }}{% endblock %}</h1>
+      <span class="badge badge-gray">READ-ONLY</span>
+    </div>
+    <div class="px-8 py-6 max-w-6xl">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+<script>
+function toggleProvenance(btn, attribute, entityId) {
+  const tray = document.getElementById('prov-' + attribute);
+  if (tray.dataset.open === '1') {
+    tray.dataset.open = '0';
+    tray.innerHTML = '';
+    btn.textContent = 'provenance \u25BE';
+    return;
+  }
+  tray.dataset.open = '1';
+  btn.textContent = 'provenance \u25B4';
+  htmx.ajax('GET', '/frag/provenance/' + encodeURIComponent(attribute) + '/' + entityId,
+            {target: tray, swap: 'innerHTML'});
+}
+</script>
+</body>
+</html>

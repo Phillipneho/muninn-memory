@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center gap-3 mb-4">
+  <span class="text-sm text-gray-500">Latest 100 logged queries · click a row to inspect</span>
+  {% if flag == '1' %}<span class="badge badge-green">entity_state_read_enabled: ON</span>
+  {% else %}<span class="badge badge-red">entity_state_read_enabled: OFF</span>{% endif %}
+  <button class="text-xs text-indigo-500 hover:text-indigo-700 font-medium ml-auto"
+          hx-get="/queries" hx-target="#qlog" hx-select="#qlog" hx-swap="outerHTML">refresh</button>
+</div>
+
+<div class="flex gap-4 items-start">
+  <div id="qlog" class="card p-0 overflow-hidden flex-1">
+    <table class="w-full text-sm">
+      <thead><tr class="bg-gray-50 text-left text-xs text-gray-400 uppercase tracking-wide">
+        <th class="px-4 py-2">Query</th><th class="px-4 py-2">Results</th>
+        <th class="px-4 py-2">Logged</th>
+      </tr></thead>
+      <tbody>
+        {% for r in rows %}
+        <tr class="border-t border-gray-100 hover:bg-indigo-50/40 cursor-pointer"
+            hx-get="/queries/{{ r.id }}" hx-target="#inspector" hx-swap="innerHTML">
+          <td class="px-4 py-2 max-w-lg">{{ r.query }}</td>
+          <td class="px-4 py-2">
+            {% if r.results_count and r.results_count > 0 %}
+              <span class="badge badge-green">{{ r.results_count }}</span>
+            {% else %}
+              <span class="badge badge-amber">abstained</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-2 mono text-xs text-gray-400">{{ r.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Inspector drawer -->
+  <div id="inspector" class="w-96 shrink-0 card p-0 sticky top-24 {% if rows %}{% else %}hidden{% endif %}">
+    <div class="p-4 text-sm text-gray-400">Click a query row to inspect it.</div>
+  </div>
+</div>
+{% endblock %}
